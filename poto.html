@@ -1,0 +1,2489 @@
+<!doctype html>
+
+<html lang="es" class="h-full">
+
+ <head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sistema de Gestión</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <script src="/_sdk/element_sdk.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+
+  <style>
+
+* { font-family: 'DM Sans', sans-serif; }
+
+.mono { font-family: 'Space Mono', monospace; }
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+@keyframes slideIn { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
+
+.fade-in { animation: fadeIn 0.4s ease both; }
+
+.slide-in { animation: slideIn 0.35s ease both; }
+
+.toast-in { animation: fadeIn 0.3s ease both; }
+
+::-webkit-scrollbar { width:6px; }
+
+::-webkit-scrollbar-thumb { background:#334155; border-radius:3px; }
+
+</style>
+
+  <style>body { box-sizing: border-box; }</style>
+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+
+ </head>
+
+ <body class="h-full">
+
+  <div id="app" class="h-full w-full overflow-auto" style="background:#0f172a;">
+
+   <!-- TOAST -->
+
+   <div id="toast" class="fixed top-4 right-4 z-50 hidden"></div><!-- LOGIN SCREEN -->
+
+   <div id="login-screen" class="h-full w-full flex items-center justify-center" style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);">
+
+    <div class="fade-in w-full max-w-md mx-4">
+
+     <!-- Logo area -->
+
+     <div class="text-center mb-8">
+
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background:#f59e0b;">
+
+       <i data-lucide="shield-check" style="width:32px;height:32px;color:#0f172a;"></i>
+
+      </div>
+
+      <h1 id="login-title" class="text-2xl font-bold text-white">Sistema de Gestión</h1>
+
+      <p id="login-subtitle" class="text-sm mt-1" style="color:#64748b;">DEMO — Prototipo funcional</p>
+
+     </div>
+
+     <div class="rounded-2xl p-8" style="background:#1e293b;border:1px solid #334155;">
+
+      <form id="login-form" class="space-y-5">
+
+       <div>
+
+        <label for="login-user" class="block text-sm font-medium mb-2" style="color:#94a3b8;">Usuario</label>
+
+        <div class="relative">
+
+         <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2" style="width:18px;height:18px;color:#64748b;"></i> <input id="login-user" type="text" placeholder="Ingrese su usuario" class="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+        </div>
+
+       </div>
+
+       <div>
+
+        <label for="login-pass" class="block text-sm font-medium mb-2" style="color:#94a3b8;">Contraseña</label>
+
+        <div class="relative">
+
+         <i data-lucide="lock" class="absolute left-3 top-1/2 -translate-y-1/2" style="width:18px;height:18px;color:#64748b;"></i> <input id="login-pass" type="password" placeholder="Ingrese su contraseña" class="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+        </div>
+
+       </div>
+
+       <div id="login-error" class="hidden text-sm rounded-lg p-3" style="background:#7f1d1d33;color:#fca5a5;border:1px solid #7f1d1d;">
+
+        <span class="flex items-center gap-2"><i data-lucide="alert-circle" style="width:16px;height:16px;"></i> Credenciales incorrectas. Intente nuevamente.</span>
+
+       </div><button type="submit" class="w-full py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]" style="background:#f59e0b;color:#0f172a;"> Iniciar Sesión </button>
+
+      </form>
+
+      <p class="text-xs text-center mt-5" style="color:#475569;">Usuarios demo: <span class="mono" style="color:#f59e0b;">admin</span>, <span class="mono" style="color:#f59e0b;">asistente</span>, <span class="mono" style="color:#f59e0b;">supervisor</span> · Contraseña: <span class="mono" style="color:#f59e0b;">1234</span></p>
+
+     </div>
+
+    </div>
+
+   </div><!-- MAIN DASHBOARD -->
+
+   <div id="main-screen" class="h-full w-full hidden">
+
+    <div class="flex h-full">
+
+     <!-- SIDEBAR -->
+
+     <aside id="sidebar" class="w-64 flex-shrink-0 flex flex-col h-full" style="background:#1e293b;border-right:1px solid #334155;">
+
+      <div class="p-5 flex items-center gap-3" style="border-bottom:1px solid #334155;">
+
+       <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:#f59e0b;">
+
+        <i data-lucide="shield-check" style="width:18px;height:18px;color:#0f172a;"></i>
+
+       </div>
+
+       <div>
+
+        <div id="sidebar-title" class="text-sm font-bold text-white">
+
+         SGR
+
+        </div>
+
+        <div id="sidebar-company" class="text-xs" style="color:#64748b;">
+
+         EcoResíduos SAC
+
+        </div>
+
+       </div>
+
+      </div>
+
+      <nav class="flex-1 p-3 space-y-1 overflow-auto" id="nav-menu"></nav>
+
+      <div class="p-4" style="border-top:1px solid #334155;">
+
+       <div class="flex items-center gap-3 mb-3">
+
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background:#f59e0b;color:#0f172a;" id="avatar-initials">
+
+         AD
+
+        </div>
+
+        <div>
+
+         <div class="text-sm font-medium text-white" id="user-display">
+
+          Admin
+
+         </div>
+
+         <div class="text-xs" style="color:#64748b;" id="role-display">
+
+          Administrador
+
+         </div>
+
+        </div>
+
+       </div><button onclick="logout()" class="w-full flex items-center gap-2 justify-center py-2 rounded-lg text-xs font-medium transition hover:brightness-110" style="background:#0f172a;color:#94a3b8;border:1px solid #334155;"> <i data-lucide="log-out" style="width:14px;height:14px;"></i> Cerrar Sesión </button>
+
+      </div>
+
+     </aside><!-- CONTENT -->
+
+     <main class="flex-1 overflow-auto p-6" id="main-content" style="background:#0f172a;"></main>
+
+    </div>
+
+   </div>
+
+  </div>
+
+  <script>
+
+// ---- DATA ----
+
+const USERS = {
+
+  admin: { pass:'1234', name:'Admin General', role:'Administrador', initials:'AG' },
+
+  asistente: { pass:'1234', name:'María López', role:'Asistente Administrativo', initials:'ML' },
+
+  supervisor: { pass:'1234', name:'Carlos Ruiz', role:'Supervisor de Planta', initials:'CR' },
+
+  chofer: { pass:'1234', name:'Juan Morales', role:'Chofer', initials:'JM' },
+
+  logistica: { pass:'1234', name:'Patricia Gómez', role:'Encargado de Logística', initials:'PG' }
+
+};
+
+
+
+const MENU_BY_ROLE = {
+
+  'Administrador': [
+
+    { id:'dashboard', icon:'layout-dashboard', label:'Dashboard' },
+
+    { id:'catalogos', icon:'database', label:'Catálogos' },
+
+    { id:'usuarios', icon:'users', label:'Usuarios y Perfiles' },
+
+    { id:'ordenes-servicio', icon:'clipboard-list', label:'Órdenes de Servicio' },
+
+    { id:'ordenes-venta', icon:'shopping-cart', label:'Órdenes de Venta' },
+
+    { id:'facturas', icon:'file-text', label:'Facturas Electrónicas' },
+
+    { id:'rutas', icon:'map', label:'Rutas de Recolección' },
+
+    { id:'guias', icon:'receipt', label:'Guías de Recojo' },
+
+    { id:'clasificacion', icon:'tag', label:'Clasificación de Material' },
+
+    { id:'inventario', icon:'boxes', label:'Cierre de Inventario' }
+
+  ],
+
+  'Asistente Administrativo': [
+
+    { id:'dashboard', icon:'layout-dashboard', label:'Dashboard' },
+
+    { id:'catalogos', icon:'database', label:'Catálogos' },
+
+    { id:'ordenes-servicio', icon:'clipboard-list', label:'Órdenes de Servicio' },
+
+    { id:'ordenes-venta', icon:'shopping-cart', label:'Órdenes de Venta' },
+
+    { id:'facturas', icon:'file-text', label:'Facturas Electrónicas' }
+
+  ],
+
+  'Encargado de Logística': [
+
+    { id:'dashboard', icon:'layout-dashboard', label:'Dashboard' },
+
+    { id:'ordenes-servicio', icon:'clipboard-list', label:'Órdenes de Servicio' },
+
+    { id:'rutas', icon:'map', label:'Rutas de Recolección' }
+
+  ],
+
+  'Supervisor de Planta': [
+
+    { id:'dashboard', icon:'layout-dashboard', label:'Dashboard' },
+
+    { id:'catalogos', icon:'database', label:'Catálogos' },
+
+    { id:'clasificacion', icon:'tag', label:'Clasificación de Material' },
+
+    { id:'inventario', icon:'boxes', label:'Cierre de Inventario' }
+
+  ],
+
+  'Chofer': [
+
+    { id:'dashboard', icon:'layout-dashboard', label:'Dashboard' },
+
+    { id:'guias', icon:'receipt', label:'Guías de Recojo' }
+
+  ]
+
+};
+
+
+
+let currentUser = null;
+
+let currentView = 'dashboard';
+
+
+
+// Sample catalog data
+
+const catalogData = {
+
+  clientes: [
+
+    { id:1, nombre:'Industrias del Sur S.A.', ruc:'20100001234', contacto:'Juan Pérez', estado:'Activo' },
+
+    { id:2, nombre:'Minera Andina Corp.', ruc:'20200005678', contacto:'Ana Torres', estado:'Activo' },
+
+    { id:3, nombre:'Textil Norte EIRL', ruc:'20300009012', contacto:'Luis Gómez', estado:'Inactivo' }
+
+  ],
+
+  vehiculos: [
+
+    { id:1, placa:'ABC-123', tipo:'Camión Baranda', capacidad:'8 Ton', estado:'Operativo' },
+
+    { id:2, placa:'XYZ-789', tipo:'Cisterna', capacidad:'12 Ton', estado:'En Mantto.' },
+
+    { id:3, placa:'DEF-456', tipo:'Furgón', capacidad:'5 Ton', estado:'Operativo' }
+
+  ],
+
+  materiales: [
+
+    { id:1, codigo:'RES-001', nombre:'Aceite usado', tipo:'Peligroso', unidad:'Galón' },
+
+    { id:2, codigo:'RES-002', nombre:'Cartón', tipo:'No Peligroso', unidad:'Kg' },
+
+    { id:3, codigo:'RES-003', nombre:'Baterías plomo', tipo:'Peligroso', unidad:'Unidad' }
+
+  ]
+
+};
+
+
+
+const usersData = [
+
+  { id:1, nombre:'Admin General', usuario:'admin', rol:'Administrador', estado:'Activo' },
+
+  { id:2, nombre:'María López', usuario:'asistente', rol:'Asistente Administrativo', estado:'Activo' },
+
+  { id:3, nombre:'Carlos Ruiz', usuario:'supervisor', rol:'Supervisor de Planta', estado:'Activo' },
+
+  { id:4, nombre:'Pedro Díaz', usuario:'chofer01', rol:'Chofer', estado:'Inactivo' }
+
+];
+
+
+
+// ---- TOAST ----
+
+function showToast(msg, type='success') {
+
+  const t = document.getElementById('toast');
+
+  const colors = { success:'background:#065f46;border:1px solid #059669;color:#a7f3d0;', error:'background:#7f1d1d;border:1px solid #dc2626;color:#fca5a5;', info:'background:#1e3a5f;border:1px solid #3b82f6;color:#93c5fd;' };
+
+  const icons = { success:'check-circle', error:'alert-circle', info:'info' };
+
+  t.innerHTML = `<div class="toast-in flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium shadow-lg" style="${colors[type]}"><i data-lucide="${icons[type]}" style="width:16px;height:16px;"></i>${msg}</div>`;
+
+  t.classList.remove('hidden');
+
+  lucide.createIcons();
+
+  setTimeout(() => t.classList.add('hidden'), 3000);
+
+}
+
+
+
+// ---- LOGIN ----
+
+document.getElementById('login-form').addEventListener('submit', function(e) {
+
+  e.preventDefault();
+
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+
+  const p = document.getElementById('login-pass').value;
+
+  const err = document.getElementById('login-error');
+
+
+
+  if (USERS[u] && USERS[u].pass === p) {
+
+    err.classList.add('hidden');
+
+    currentUser = { ...USERS[u], username: u };
+
+    enterDashboard();
+
+  } else {
+
+    err.classList.remove('hidden');
+
+  }
+
+});
+
+
+
+function enterDashboard() {
+
+  document.getElementById('login-screen').classList.add('hidden');
+
+  document.getElementById('main-screen').classList.remove('hidden');
+
+  document.getElementById('user-display').textContent = currentUser.name;
+
+  document.getElementById('role-display').textContent = currentUser.role;
+
+  document.getElementById('avatar-initials').textContent = currentUser.initials;
+
+  buildNav();
+
+  navigateTo('dashboard');
+
+}
+
+
+
+function logout() {
+
+  currentUser = null;
+
+  document.getElementById('main-screen').classList.add('hidden');
+
+  document.getElementById('login-screen').classList.remove('hidden');
+
+  document.getElementById('login-user').value = '';
+
+  document.getElementById('login-pass').value = '';
+
+  document.getElementById('login-error').classList.add('hidden');
+
+}
+
+
+
+// ---- NAV ----
+
+function buildNav() {
+
+  const nav = document.getElementById('nav-menu');
+
+  const items = MENU_BY_ROLE[currentUser.role] || MENU_BY_ROLE['Administrador'];
+
+  nav.innerHTML = items.map(m => `
+
+    <button onclick="navigateTo('${m.id}')" id="nav-${m.id}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all" style="color:#94a3b8;">
+
+      <i data-lucide="${m.icon}" style="width:18px;height:18px;"></i>${m.label}
+
+    </button>
+
+  `).join('');
+
+  lucide.createIcons();
+
+}
+
+
+
+function navigateTo(view) {
+
+  currentView = view;
+
+  // highlight nav
+
+  document.querySelectorAll('#nav-menu button').forEach(b => { b.style.background='transparent'; b.style.color='#94a3b8'; });
+
+  const active = document.getElementById('nav-'+view);
+
+  if (active) { active.style.background='#f59e0b22'; active.style.color='#f59e0b'; }
+
+
+
+  const c = document.getElementById('main-content');
+
+  if (view === 'dashboard') renderDashboard(c);
+
+  else if (view === 'catalogos') renderCatalogos(c);
+
+  else if (view === 'usuarios') renderUsuarios(c);
+
+  else if (view === 'ordenes-servicio') renderOrdenesServicio(c);
+
+  else if (view === 'ordenes-venta') renderOrdenesVenta(c);
+
+  else if (view === 'facturas') renderFacturas(c);
+
+  else if (view === 'rutas') renderRutas(c);
+
+  else if (view === 'guias') renderGuias(c);
+
+  else if (view === 'clasificacion') renderClasificacion(c);
+
+  else if (view === 'inventario') renderInventario(c);
+
+}
+
+
+
+// ---- DASHBOARD ----
+
+function renderDashboard(c) {
+
+  const stats = [
+
+    { icon:'building-2', label:'Clientes', value: catalogData.clientes.length, color:'#3b82f6' },
+
+    { icon:'truck', label:'Vehículos', value: catalogData.vehiculos.length, color:'#10b981' },
+
+    { icon:'package', label:'Materiales', value: catalogData.materiales.length, color:'#8b5cf6' },
+
+    { icon:'users', label:'Usuarios', value: usersData.length, color:'#f59e0b' }
+
+  ];
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Bienvenido, ${currentUser.name}</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">Panel de control · ${currentUser.role}</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+        ${stats.map((s,i) => `
+
+          <div class="slide-in rounded-xl p-5" style="background:#1e293b;border:1px solid #334155;animation-delay:${i*0.08}s;">
+
+            <div class="flex items-center justify-between mb-3">
+
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:${s.color}22;"><i data-lucide="${s.icon}" style="width:20px;height:20px;color:${s.color};"></i></div>
+
+              <span class="mono text-2xl font-bold text-white">${s.value}</span>
+
+            </div>
+
+            <span class="text-sm" style="color:#94a3b8;">${s.label} registrados</span>
+
+          </div>
+
+        `).join('')}
+
+      </div>
+
+      <div class="rounded-xl p-6" style="background:#1e293b;border:1px solid #334155;">
+
+        <h3 class="text-sm font-semibold text-white mb-4">Accesos según perfil (CUB01)</h3>
+
+        <div class="space-y-2">
+
+          ${Object.entries(MENU_BY_ROLE).map(([role, menus]) => `
+
+            <div class="flex items-center gap-3 text-sm py-2 px-3 rounded-lg" style="background:#0f172a;">
+
+              <span class="font-medium" style="color:#f59e0b;min-width:200px;">${role}</span>
+
+              <span style="color:#94a3b8;">→ ${menus.map(m=>m.label).join(', ')}</span>
+
+            </div>
+
+          `).join('')}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+// ---- CATÁLOGOS (CUB02) ----
+
+let activeCatalog = 'clientes';
+
+
+
+function renderCatalogos(c) {
+
+  const tabs = [
+
+    { id:'clientes', icon:'building-2', label:'Clientes' },
+
+    { id:'vehiculos', icon:'truck', label:'Vehículos' },
+
+    { id:'materiales', icon:'package', label:'Materiales' }
+
+  ];
+
+
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Catálogos del Sistema</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB02 — Gestión de registros maestros</p>
+
+      <div class="flex gap-2 mb-5">
+
+        ${tabs.map(t => `
+
+          <button onclick="switchCatalog('${t.id}')" id="tab-${t.id}" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition" style="${activeCatalog===t.id ? 'background:#f59e0b;color:#0f172a;' : 'background:#1e293b;color:#94a3b8;border:1px solid #334155;'}">
+
+            <i data-lucide="${t.icon}" style="width:16px;height:16px;"></i>${t.label}
+
+          </button>
+
+        `).join('')}
+
+      </div>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white" id="catalog-count"></span>
+
+          <button onclick="openNewForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>Nuevo Registro
+
+          </button>
+
+        </div>
+
+        <div id="catalog-table" class="overflow-x-auto"></div>
+
+      </div>
+
+      <div id="new-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;" id="new-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  renderCatalogTable();
+
+  lucide.createIcons();
+
+}
+
+
+
+function switchCatalog(id) {
+
+  activeCatalog = id;
+
+  renderCatalogos(document.getElementById('main-content'));
+
+}
+
+
+
+function renderCatalogTable() {
+
+  const data = catalogData[activeCatalog];
+
+  document.getElementById('catalog-count').textContent = `${data.length} registros`;
+
+  const headers = { clientes:['ID','Nombre','RUC','Contacto','Estado'], vehiculos:['ID','Placa','Tipo','Capacidad','Estado'], materiales:['ID','Código','Nombre','Tipo','Unidad'] };
+
+  const keys = { clientes:['id','nombre','ruc','contacto','estado'], vehiculos:['id','placa','tipo','capacidad','estado'], materiales:['id','codigo','nombre','tipo','unidad'] };
+
+  const h = headers[activeCatalog];
+
+  const k = keys[activeCatalog];
+
+
+
+  const statusColor = v => {
+
+    const lc = (v||'').toLowerCase();
+
+    if (lc==='activo'||lc==='operativo') return 'background:#065f4622;color:#34d399;border:1px solid #065f46;';
+
+    if (lc==='inactivo'||lc.includes('mantto')) return 'background:#7f1d1d22;color:#fca5a5;border:1px solid #7f1d1d;';
+
+    if (lc==='peligroso') return 'background:#7f1d1d22;color:#fca5a5;border:1px solid #7f1d1d;';
+
+    return 'background:#1e3a5f22;color:#93c5fd;border:1px solid #1e3a5f;';
+
+  };
+
+
+
+  document.getElementById('catalog-table').innerHTML = `
+
+    <table class="w-full text-sm">
+
+      <thead><tr style="background:#0f172a;">
+
+        ${h.map(col => `<th class="px-4 py-3 text-left font-medium" style="color:#64748b;">${col}</th>`).join('')}
+
+      </tr></thead>
+
+      <tbody>
+
+        ${data.map(row => `<tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+          ${k.map(key => {
+
+            const val = row[key];
+
+            const isStatus = key==='estado'||key==='tipo';
+
+            return `<td class="px-4 py-3 text-white">${isStatus ? `<span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${statusColor(val)}">${val}</span>` : val}</td>`;
+
+          }).join('')}
+
+        </tr>`).join('')}
+
+      </tbody>
+
+    </table>
+
+  `;
+
+}
+
+
+
+function openNewForm() {
+
+  const overlay = document.getElementById('new-form-overlay');
+
+  const content = document.getElementById('new-form-content');
+
+  const fields = {
+
+    clientes: [{l:'Nombre',k:'nombre'},{l:'RUC',k:'ruc'},{l:'Contacto',k:'contacto'}],
+
+    vehiculos: [{l:'Placa',k:'placa'},{l:'Tipo',k:'tipo'},{l:'Capacidad',k:'capacidad'}],
+
+    materiales: [{l:'Código',k:'codigo'},{l:'Nombre',k:'nombre'},{l:'Tipo',k:'tipo'},{l:'Unidad',k:'unidad'}]
+
+  };
+
+  const f = fields[activeCatalog];
+
+  const title = { clientes:'Cliente', vehiculos:'Vehículo', materiales:'Material' }[activeCatalog];
+
+
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Nuevo ${title}</h3>
+
+    <form id="catalog-new-form" class="space-y-4">
+
+      ${f.map(fi => `
+
+        <div>
+
+          <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">${fi.l}</label>
+
+          <input name="${fi.k}" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Ingrese ${fi.l.toLowerCase()}">
+
+        </div>
+
+      `).join('')}
+
+      <div id="dup-error" class="hidden text-sm rounded-lg p-3" style="background:#7f1d1d33;color:#fca5a5;border:1px solid #7f1d1d;">
+
+        <span class="flex items-center gap-2"><i data-lucide="alert-circle" style="width:16px;height:16px;"></i> Registro duplicado detectado.</span>
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Guardar</button>
+
+        <button type="button" onclick="closeNewForm()" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('catalog-new-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const obj = Object.fromEntries(fd);
+
+    // Check duplicates (CUB02 alt flow)
+
+    const data = catalogData[activeCatalog];
+
+    const dupKey = activeCatalog==='vehiculos' ? 'placa' : activeCatalog==='clientes' ? 'ruc' : 'codigo';
+
+    if (data.some(d => d[dupKey]?.toLowerCase() === obj[dupKey]?.toLowerCase())) {
+
+      document.getElementById('dup-error').classList.remove('hidden');
+
+      return;
+
+    }
+
+    obj.id = data.length + 1;
+
+    if (activeCatalog==='clientes') obj.estado = 'Activo';
+
+    if (activeCatalog==='vehiculos') obj.estado = 'Operativo';
+
+    data.push(obj);
+
+    closeNewForm();
+
+    renderCatalogTable();
+
+    document.getElementById('catalog-count').textContent = `${data.length} registros`;
+
+    showToast('Registro guardado exitosamente');
+
+  });
+
+}
+
+
+
+function closeNewForm() {
+
+  document.getElementById('new-form-overlay').classList.add('hidden');
+
+}
+
+
+
+// ---- USUARIOS (CUB03) ----
+
+function renderUsuarios(c) {
+
+  if (currentUser.role !== 'Administrador') {
+
+    c.innerHTML = `<div class="fade-in flex items-center justify-center h-full"><p class="text-sm" style="color:#64748b;">No tiene permisos para acceder a este módulo.</p></div>`;
+
+    return;
+
+  }
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Usuarios y Perfiles</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB03 — Administración de cuentas y roles</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${usersData.length} usuarios</span>
+
+          <button onclick="openUserForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="user-plus" style="width:16px;height:16px;"></i>Asignar Rol
+
+          </button>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Nombre</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Usuario</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Rol</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Acción</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${usersData.map(u => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 text-white font-medium">${u.nombre}</td>
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">${u.usuario}</td>
+
+                <td class="px-4 py-3 text-white">${u.rol}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${u.estado==='Activo'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':'background:#7f1d1d22;color:#fca5a5;border:1px solid #7f1d1d;'}">${u.estado}</span></td>
+
+                <td class="px-4 py-3">
+
+                  <button onclick="toggleUserState(${u.id})" class="px-3 py-1 rounded-md text-xs font-medium transition hover:brightness-110" style="${u.estado==='Activo'?'background:#7f1d1d44;color:#fca5a5;':'background:#065f4644;color:#34d399;'}">
+
+                    ${u.estado==='Activo'?'Desactivar':'Activar'}
+
+                  </button>
+
+                </td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div id="user-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-md mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;" id="user-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+function toggleUserState(id) {
+
+  const u = usersData.find(x => x.id === id);
+
+  if (u) {
+
+    u.estado = u.estado === 'Activo' ? 'Inactivo' : 'Activo';
+
+    renderUsuarios(document.getElementById('main-content'));
+
+    showToast(`Usuario ${u.nombre} ${u.estado === 'Activo' ? 'activado' : 'desactivado'}`);
+
+  }
+
+}
+
+
+
+function openUserForm() {
+
+  const overlay = document.getElementById('user-form-overlay');
+
+  const content = document.getElementById('user-form-content');
+
+  const roles = ['Administrador','Asistente Administrativo','Supervisor de Planta','Chofer','Encargado de Logística'];
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Asignar Rol a Trabajador</h3>
+
+    <form id="user-assign-form" class="space-y-4">
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Nombre del Trabajador</label>
+
+        <input name="nombre" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Nombre completo">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Usuario</label>
+
+        <input name="usuario" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Nombre de usuario">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Rol</label>
+
+        <select name="rol" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          ${roles.map(r => `<option value="${r}">${r}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Asignar</button>
+
+        <button type="button" onclick="document.getElementById('user-form-overlay').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('user-assign-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const obj = Object.fromEntries(fd);
+
+    obj.id = usersData.length + 1;
+
+    obj.estado = 'Activo';
+
+    usersData.push(obj);
+
+    document.getElementById('user-form-overlay').classList.add('hidden');
+
+    renderUsuarios(document.getElementById('main-content'));
+
+    showToast(`Rol "${obj.rol}" asignado a ${obj.nombre}`);
+
+  });
+
+}
+
+
+
+// ---- ÓRDENES DE SERVICIO (CUB04) ----
+
+let ordenesServicio = [
+
+  { id:1, cliente:'Industrias del Sur S.A.', sede:'Zona Industrial', estado:'Aprobada', ventana:'08:00-10:00', volumen:'2 m³', fecha:'2024-01-15' },
+
+  { id:2, cliente:'Minera Andina Corp.', sede:'Oficina Central', estado:'En Ruta', ventana:'10:00-12:00', volumen:'3 m³', fecha:'2024-01-15' }
+
+];
+
+
+
+function renderOrdenesServicio(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Órdenes de Servicio</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB04 — Solicitudes de recojo de residuos</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${ordenesServicio.length} órdenes</span>
+
+          <button onclick="openOSForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>Nueva Orden
+
+          </button>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">ID</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Cliente</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Sede</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Ventana</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Volumen</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${ordenesServicio.map(o => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">OS-${String(o.id).padStart(4,'0')}</td>
+
+                <td class="px-4 py-3 text-white">${o.cliente}</td>
+
+                <td class="px-4 py-3 text-white">${o.sede}</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${o.ventana}</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${o.volumen}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${o.estado==='Aprobada'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':o.estado==='En Ruta'?'background:#1e3a5f22;color:#93c5fd;border:1px solid #1e3a5f;':'background:#7f1d1d22;color:#fca5a5;border:1px solid #7f1d1d;'}">${o.estado}</span></td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div id="os-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;" id="os-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+function openOSForm() {
+
+  const overlay = document.getElementById('os-form-overlay');
+
+  const content = document.getElementById('os-form-content');
+
+  const clientes = catalogData.clientes.map(c => c.nombre);
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Nueva Orden de Servicio</h3>
+
+    <form id="os-new-form" class="space-y-4">
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Cliente</label>
+
+        <select name="cliente" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="">Seleccione cliente</option>
+
+          ${clientes.map(c => `<option value="${c}">${c}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Sede de Recojo</label>
+
+        <input name="sede" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Ej. Zona Industrial">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Ventana Horaria</label>
+
+        <input name="ventana" type="text" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Ej. 08:00-10:00">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Volumen Estimado</label>
+
+        <input name="volumen" type="text" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Ej. 2 m³">
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Crear OS</button>
+
+        <button type="button" onclick="document.getElementById('os-form-overlay').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('os-new-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const obj = Object.fromEntries(fd);
+
+    obj.id = ordenesServicio.length + 1;
+
+    obj.estado = 'Aprobada';
+
+    obj.fecha = new Date().toISOString().split('T')[0];
+
+    ordenesServicio.push(obj);
+
+    document.getElementById('os-form-overlay').classList.add('hidden');
+
+    renderOrdenesServicio(document.getElementById('main-content'));
+
+    showToast('Orden de Servicio creada correctamente');
+
+  });
+
+}
+
+
+
+// ---- ÓRDENES DE VENTA (CUB05) ----
+
+let ordenesVenta = [
+
+  { id:1, cliente:'Recicladora Global', material:'Cartón', cantidad:'500 Kg', subtotal:1500, igv:270, total:1770, estado:'Pendiente' },
+
+  { id:2, cliente:'Industrial Metals', material:'Aluminio', cantidad:'200 Kg', subtotal:4000, igv:720, total:4720, estado:'Facturada' }
+
+];
+
+
+
+function renderOrdenesVenta(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Órdenes de Venta</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB05 — Registro de transacciones comerciales</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${ordenesVenta.length} órdenes</span>
+
+          <button onclick="openOVForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>Nueva Venta
+
+          </button>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">ID</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Cliente</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Material</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Cantidad</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Total</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${ordenesVenta.map(o => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">OV-${String(o.id).padStart(4,'0')}</td>
+
+                <td class="px-4 py-3 text-white">${o.cliente}</td>
+
+                <td class="px-4 py-3 text-white">${o.material}</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${o.cantidad}</td>
+
+                <td class="px-4 py-3 font-semibold text-white">S/ ${o.total.toFixed(2)}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${o.estado==='Facturada'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':'background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b;'}">${o.estado}</span></td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div id="ov-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in overflow-y-auto" style="background:#1e293b;border:1px solid #334155;max-height:90vh;" id="ov-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+function openOVForm() {
+
+  const overlay = document.getElementById('ov-form-overlay');
+
+  const content = document.getElementById('ov-form-content');
+
+  const materiales = catalogData.materiales.map(m => m.nombre);
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Nueva Orden de Venta</h3>
+
+    <form id="ov-new-form" class="space-y-4">
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Comprador</label>
+
+        <input name="cliente" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Nombre del comprador">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Material</label>
+
+        <select name="material" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="">Seleccione material</option>
+
+          ${materiales.map(m => `<option value="${m}">${m}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Cantidad</label>
+
+        <input name="cantidad" type="text" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Ej. 500 Kg">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Precio Unitario (S/)</label>
+
+        <input name="precio" type="number" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="0.00" step="0.01">
+
+      </div>
+
+      <div class="p-3 rounded-lg" style="background:#0f172a;border:1px solid #334155;">
+
+        <div class="flex justify-between mb-2"><span style="color:#94a3b8;">Subtotal:</span><span class="text-white" id="ov-subtotal">S/ 0.00</span></div>
+
+        <div class="flex justify-between mb-2"><span style="color:#94a3b8;">IGV (18%):</span><span class="text-white" id="ov-igv">S/ 0.00</span></div>
+
+        <div class="flex justify-between font-bold"><span class="text-white">Total:</span><span class="text-white" id="ov-total">S/ 0.00</span></div>
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Crear Venta</button>
+
+        <button type="button" onclick="document.getElementById('ov-form-overlay').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  
+
+  const precioInput = document.querySelector('input[name="precio"]');
+
+  precioInput?.addEventListener('input', function() {
+
+    const precio = parseFloat(this.value) || 0;
+
+    const subtotal = precio;
+
+    const igv = subtotal * 0.18;
+
+    const total = subtotal + igv;
+
+    document.getElementById('ov-subtotal').textContent = `S/ ${subtotal.toFixed(2)}`;
+
+    document.getElementById('ov-igv').textContent = `S/ ${igv.toFixed(2)}`;
+
+    document.getElementById('ov-total').textContent = `S/ ${total.toFixed(2)}`;
+
+  });
+
+  
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('ov-new-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const precio = parseFloat(fd.get('precio')) || 0;
+
+    const subtotal = precio;
+
+    const igv = subtotal * 0.18;
+
+    const obj = {
+
+      id: ordenesVenta.length + 1,
+
+      cliente: fd.get('cliente'),
+
+      material: fd.get('material'),
+
+      cantidad: fd.get('cantidad'),
+
+      subtotal: subtotal,
+
+      igv: igv,
+
+      total: subtotal + igv,
+
+      estado: 'Pendiente'
+
+    };
+
+    ordenesVenta.push(obj);
+
+    document.getElementById('ov-form-overlay').classList.add('hidden');
+
+    renderOrdenesVenta(document.getElementById('main-content'));
+
+    showToast('Orden de Venta registrada');
+
+  });
+
+}
+
+
+
+// ---- FACTURAS ELECTRÓNICAS (CUB06) ----
+
+let facturas = [
+
+  { id:1, ov:'OV-0002', cliente:'Industrial Metals', ruc:'20123456789', monto:4720, estado:'Emitida', cdr:'CDR-001' },
+
+  { id:2, ov:'OV-0001', cliente:'Recicladora Global', ruc:'20987654321', monto:1770, estado:'Pendiente', cdr:'-' }
+
+];
+
+
+
+function renderFacturas(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Facturas Electrónicas</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB06 — Emisión de comprobantes ante SUNAT</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${facturas.length} registros</span>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">ID</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">OV Origen</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Cliente</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Monto</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">CDR</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${facturas.map(f => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">FC-${String(f.id).padStart(4,'0')}</td>
+
+                <td class="px-4 py-3 mono text-white">${f.ov}</td>
+
+                <td class="px-4 py-3 text-white">${f.cliente}</td>
+
+                <td class="px-4 py-3 font-semibold text-white">S/ ${f.monto.toFixed(2)}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${f.estado==='Emitida'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':'background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b;'}">${f.estado}</span></td>
+
+                <td class="px-4 py-3 mono" style="color:#94a3b8;">${f.cdr}</td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+// ---- RUTAS DE RECOLECCIÓN (CUB07) ----
+
+let rutas = [
+
+  { id:1, chofer:'Juan Morales', vehiculo:'ABC-123', os:['OS-0001','OS-0002'], carga:'5/8 Ton', estado:'En Ruta', salida:'08:30' },
+
+  { id:2, chofer:'Diego López', vehiculo:'XYZ-789', os:['OS-0003'], carga:'3/12 Ton', estado:'Completada', salida:'09:00' }
+
+];
+
+
+
+function renderRutas(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Rutas de Recolección</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB07 — Asignación de órdenes a vehículos y choferes</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${rutas.length} rutas activas</span>
+
+          <button onclick="openRutaForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>Nueva Ruta
+
+          </button>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">ID</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Chofer</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Vehículo</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Órdenes</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Carga</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${rutas.map(r => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">R-${String(r.id).padStart(4,'0')}</td>
+
+                <td class="px-4 py-3 text-white">${r.chofer}</td>
+
+                <td class="px-4 py-3 mono text-white">${r.vehiculo}</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${r.os.length} órdenes</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${r.carga}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${r.estado==='En Ruta'?'background:#1e3a5f22;color:#93c5fd;border:1px solid #1e3a5f;':'background:#065f4622;color:#34d399;border:1px solid #065f46;'}">${r.estado}</span></td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div id="ruta-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;" id="ruta-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+function openRutaForm() {
+
+  const overlay = document.getElementById('ruta-form-overlay');
+
+  const content = document.getElementById('ruta-form-content');
+
+  const choferes = ['Juan Morales','Diego López','Roberto Santos'];
+
+  const vehiculos = catalogData.vehiculos.map(v => v.placa);
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Asignar Nueva Ruta</h3>
+
+    <form id="ruta-new-form" class="space-y-4">
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Chofer</label>
+
+        <select name="chofer" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="">Seleccione chofer</option>
+
+          ${choferes.map(c => `<option value="${c}">${c}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Vehículo</label>
+
+        <select name="vehiculo" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="">Seleccione vehículo</option>
+
+          ${vehiculos.map(v => `<option value="${v}">${v}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Órdenes a Incluir (separadas por comas)</label>
+
+        <input name="ordenes" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="Ej. OS-0001, OS-0002">
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Crear Ruta</button>
+
+        <button type="button" onclick="document.getElementById('ruta-form-overlay').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('ruta-new-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const os = fd.get('ordenes').split(',').map(o => o.trim());
+
+    const obj = {
+
+      id: rutas.length + 1,
+
+      chofer: fd.get('chofer'),
+
+      vehiculo: fd.get('vehiculo'),
+
+      os: os,
+
+      carga: `${os.length}/12 Ton`,
+
+      estado: 'En Ruta',
+
+      salida: new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})
+
+    };
+
+    rutas.push(obj);
+
+    document.getElementById('ruta-form-overlay').classList.add('hidden');
+
+    renderRutas(document.getElementById('main-content'));
+
+    showToast('Ruta asignada correctamente');
+
+  });
+
+}
+
+
+
+// ---- GUÍAS DE RECOJO (CUB08) ----
+
+let guias = [
+
+  { id:1, ruta:'R-0001', cliente:'Industrias del Sur', peso:'1850 Kg', firma:'Sí', foto:'Sí', estado:'Completada' },
+
+  { id:2, ruta:'R-0002', cliente:'Minera Andina', peso:'2200 Kg', firma:'No', foto:'Sí', estado:'En Proceso' }
+
+];
+
+
+
+function renderGuias(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Guías de Recojo</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB08 — Registro de pesaje y evidencias en campo</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${guias.length} guías</span>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">ID</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Ruta</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Cliente</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Peso</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Firma</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Foto</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${guias.map(g => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">GR-${String(g.id).padStart(4,'0')}</td>
+
+                <td class="px-4 py-3 mono text-white">${g.ruta}</td>
+
+                <td class="px-4 py-3 text-white">${g.cliente}</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${g.peso}</td>
+
+                <td class="px-4 py-3"><span style="color:${g.firma==='Sí'?'#34d399':'#fca5a5'};"><i data-lucide="${g.firma==='Sí'?'check':'x'}" style="width:16px;height:16px;"></i></span></td>
+
+                <td class="px-4 py-3"><span style="color:${g.foto==='Sí'?'#34d399':'#fca5a5'};"><i data-lucide="${g.foto==='Sí'?'check':'x'}" style="width:16px;height:16px;"></i></span></td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${g.estado==='Completada'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':'background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b;'}">${g.estado}</span></td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+// ---- CLASIFICACIÓN DE MATERIAL (CUB09) ----
+
+let materiales_clasificados = [
+
+  { id:1, lote:'LOT-001', material:'Cartón Corrugado', ia_confidence:'95%', validacion:'Confirmada', operario:'Pedro Díaz', fecha:'2024-01-15' },
+
+  { id:2, lote:'LOT-002', material:'Plástico HDPE', ia_confidence:'87%', validacion:'Validación Manual', operario:'Ana María', fecha:'2024-01-15' }
+
+];
+
+
+
+function renderClasificacion(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Clasificación de Material</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB09 — IA asistida + Validación humana</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${materiales_clasificados.length} registros</span>
+
+          <button onclick="openClasificacionForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>Clasificar
+
+          </button>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Lote</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Material</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">IA Confianza</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Validación</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Operario</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${materiales_clasificados.map(m => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">${m.lote}</td>
+
+                <td class="px-4 py-3 text-white">${m.material}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="background:#8b5cf622;color:#d8b4fe;border:1px solid #8b5cf6;">${m.ia_confidence}</span></td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${m.validacion==='Confirmada'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':'background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b;'}">${m.validacion}</span></td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${m.operario}</td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div id="clasificacion-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;" id="clasificacion-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+function openClasificacionForm() {
+
+  const overlay = document.getElementById('clasificacion-form-overlay');
+
+  const content = document.getElementById('clasificacion-form-content');
+
+  const materiales = ['Cartón Corrugado','Plástico HDPE','Papel Blanco','Aluminio','Vidrio','Metal Ferroso','Baterías'];
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Clasificar Material</h3>
+
+    <form id="clasificacion-new-form" class="space-y-4">
+
+      <div class="p-4 rounded-lg" style="background:#0f172a;border:2px dashed #334155;text-align:center;">
+
+        <i data-lucide="camera" style="width:32px;height:32px;color:#f59e0b;margin:0 auto 8px;"></i>
+
+        <p style="color:#94a3b8;font-size:12px;">Simulación: Escanear residuo con IA</p>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Sugerencia IA (95% confianza)</label>
+
+        <select name="material_ia" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          ${materiales.map(m => `<option value="${m}">${m}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">¿Validar sugerencia?</label>
+
+        <select name="validacion" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="Confirmada">✓ Confirmada</option>
+
+          <option value="Validación Manual">✗ Corregir manualmente</option>
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Material Correcto</label>
+
+        <select name="material_final" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          ${materiales.map(m => `<option value="${m}">${m}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Guardar Clasificación</button>
+
+        <button type="button" onclick="document.getElementById('clasificacion-form-overlay').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('clasificacion-new-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const obj = {
+
+      id: materiales_clasificados.length + 1,
+
+      lote: `LOT-${String(materiales_clasificados.length + 1).padStart(3,'0')}`,
+
+      material: fd.get('material_final'),
+
+      ia_confidence: '95%',
+
+      validacion: fd.get('validacion'),
+
+      operario: currentUser.name,
+
+      fecha: new Date().toISOString().split('T')[0]
+
+    };
+
+    materiales_clasificados.push(obj);
+
+    document.getElementById('clasificacion-form-overlay').classList.add('hidden');
+
+    renderClasificacion(document.getElementById('main-content'));
+
+    showToast(`Material ${obj.material} clasificado`);
+
+  });
+
+}
+
+
+
+// ---- CIERRE DE INVENTARIO (CUB10) ----
+
+let inventario_lotes = [
+
+  { id:1, lote:'LOT-001', material:'Cartón', pesoBruto:'1900 Kg', pesoFinal:'1850 Kg', merma:'50 Kg', zona:'Almacén A', estado:'Cerrado', supervisor:'Carlos Ruiz' },
+
+  { id:2, lote:'LOT-002', material:'Plástico', pesoBruto:'2300 Kg', pesoFinal:'2200 Kg', merma:'100 Kg', zona:'Almacén B', estado:'Abierto', supervisor:'-' }
+
+];
+
+
+
+function renderInventario(c) {
+
+  c.innerHTML = `
+
+    <div class="fade-in">
+
+      <h2 class="text-xl font-bold text-white mb-1">Cierre de Inventario</h2>
+
+      <p class="text-sm mb-6" style="color:#64748b;">CUB10 — Procesamiento final y actualización de stock</p>
+
+      <div class="rounded-xl overflow-hidden" style="background:#1e293b;border:1px solid #334155;">
+
+        <div class="flex items-center justify-between p-4" style="border-bottom:1px solid #334155;">
+
+          <span class="text-sm font-semibold text-white">${inventario_lotes.length} lotes</span>
+
+          <button onclick="openInventarioForm()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">
+
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>Cerrar Lote
+
+          </button>
+
+        </div>
+
+        <table class="w-full text-sm">
+
+          <thead><tr style="background:#0f172a;">
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Lote</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Material</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Peso Final</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Merma</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Zona</th>
+
+            <th class="px-4 py-3 text-left font-medium" style="color:#64748b;">Estado</th>
+
+          </tr></thead>
+
+          <tbody>
+
+            ${inventario_lotes.map(l => `
+
+              <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
+
+                <td class="px-4 py-3 mono" style="color:#f59e0b;">${l.lote}</td>
+
+                <td class="px-4 py-3 text-white">${l.material}</td>
+
+                <td class="px-4 py-3 font-medium text-white">${l.pesoFinal}</td>
+
+                <td class="px-4 py-3" style="color:#fca5a5;">${l.merma}</td>
+
+                <td class="px-4 py-3" style="color:#94a3b8;">${l.zona}</td>
+
+                <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-md text-xs font-medium" style="${l.estado==='Cerrado'?'background:#065f4622;color:#34d399;border:1px solid #065f46;':'background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b;'}">${l.estado}</span></td>
+
+              </tr>
+
+            `).join('')}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div id="inventario-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
+
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;" id="inventario-form-content"></div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  lucide.createIcons();
+
+}
+
+
+
+function openInventarioForm() {
+
+  const overlay = document.getElementById('inventario-form-overlay');
+
+  const content = document.getElementById('inventario-form-content');
+
+  content.innerHTML = `
+
+    <h3 class="text-lg font-bold text-white mb-4">Cerrar Lote de Inventario</h3>
+
+    <form id="inventario-new-form" class="space-y-4">
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Material Procesado</label>
+
+        <select name="material" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="">Seleccione material</option>
+
+          ${catalogData.materiales.map(m => `<option value="${m.nombre}">${m.nombre}</option>`).join('')}
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Peso Bruto (Kg)</label>
+
+        <input name="pesoBruto" type="number" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="0" step="1">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Peso Final (Kg)</label>
+
+        <input name="pesoFinal" type="number" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;" placeholder="0" step="1">
+
+      </div>
+
+      <div>
+
+        <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Zona de Almacén</label>
+
+        <select name="zona" required class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2" style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+
+          <option value="Almacén A">Almacén A</option>
+
+          <option value="Almacén B">Almacén B</option>
+
+          <option value="Almacén C">Almacén C</option>
+
+        </select>
+
+      </div>
+
+      <div class="p-3 rounded-lg" style="background:#0f172a;">
+
+        <div class="flex justify-between text-xs" style="color:#94a3b8;">
+
+          <span>Merma estimada:</span>
+
+          <span id="merma-calc">0 Kg</span>
+
+        </div>
+
+      </div>
+
+      <div class="flex gap-3 pt-2">
+
+        <button type="submit" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition hover:brightness-110" style="background:#f59e0b;color:#0f172a;">Cerrar Lote</button>
+
+        <button type="button" onclick="document.getElementById('inventario-form-overlay').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition" style="background:#334155;color:#94a3b8;">Cancelar</button>
+
+      </div>
+
+    </form>
+
+  `;
+
+  overlay.classList.remove('hidden');
+
+  
+
+  const pesoBrutoInput = document.querySelector('input[name="pesoBruto"]');
+
+  const pesoFinalInput = document.querySelector('input[name="pesoFinal"]');
+
+  
+
+  const calcMerma = () => {
+
+    const bruto = parseFloat(pesoBrutoInput.value) || 0;
+
+    const final = parseFloat(pesoFinalInput.value) || 0;
+
+    const merma = bruto - final;
+
+    document.getElementById('merma-calc').textContent = `${merma} Kg`;
+
+  };
+
+  
+
+  pesoBrutoInput?.addEventListener('input', calcMerma);
+
+  pesoFinalInput?.addEventListener('input', calcMerma);
+
+  
+
+  lucide.createIcons();
+
+
+
+  document.getElementById('inventario-new-form').addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    const fd = new FormData(this);
+
+    const bruto = parseInt(fd.get('pesoBruto')) || 0;
+
+    const final = parseInt(fd.get('pesoFinal')) || 0;
+
+    const obj = {
+
+      id: inventario_lotes.length + 1,
+
+      lote: `LOT-${String(inventario_lotes.length + 1).padStart(3,'0')}`,
+
+      material: fd.get('material'),
+
+      pesoBruto: bruto + ' Kg',
+
+      pesoFinal: final + ' Kg',
+
+      merma: (bruto - final) + ' Kg',
+
+      zona: fd.get('zona'),
+
+      estado: 'Cerrado',
+
+      supervisor: currentUser.name
+
+    };
+
+    inventario_lotes.push(obj);
+
+    document.getElementById('inventario-form-overlay').classList.add('hidden');
+
+    renderInventario(document.getElementById('main-content'));
+
+    showToast(`Lote ${obj.lote} cerrado y stock actualizado`);
+
+  });
+
+}
+
+
+
+// ---- ELEMENT SDK ----
+
+const defaultConfig = {
+
+  system_title: 'Sistema de Gestión',
+
+  company_name: 'EcoResíduos SAC',
+
+  background_color: '#0f172a',
+
+  surface_color: '#1e293b',
+
+  text_color: '#ffffff',
+
+  primary_action: '#f59e0b',
+
+  secondary_action: '#334155',
+
+  font_family: 'DM Sans',
+
+  font_size: 14
+
+};
+
+
+
+function applyConfig(config) {
+
+  const bg = config.background_color || defaultConfig.background_color;
+
+  const sf = config.surface_color || defaultConfig.surface_color;
+
+  const tx = config.text_color || defaultConfig.text_color;
+
+  const pa = config.primary_action || defaultConfig.primary_action;
+
+  const font = config.font_family || defaultConfig.font_family;
+
+  const size = config.font_size || defaultConfig.font_size;
+
+  const title = config.system_title || defaultConfig.system_title;
+
+  const company = config.company_name || defaultConfig.company_name;
+
+
+
+  document.body.style.fontFamily = `${font}, DM Sans, sans-serif`;
+
+  document.body.style.fontSize = `${size}px`;
+
+
+
+  const app = document.getElementById('app');
+
+  app.style.background = bg;
+
+
+
+  // Update login
+
+  const lt = document.getElementById('login-title');
+
+  if (lt) lt.textContent = title;
+
+
+
+  // Update sidebar
+
+  const st = document.getElementById('sidebar-title');
+
+  if (st) st.textContent = title.substring(0,3).toUpperCase();
+
+  const sc = document.getElementById('sidebar-company');
+
+  if (sc) sc.textContent = company;
+
+}
+
+
+
+if (window.elementSdk) {
+
+  window.elementSdk.init({
+
+    defaultConfig,
+
+    onConfigChange: async (config) => applyConfig(config),
+
+    mapToCapabilities: (config) => ({
+
+      recolorables: [
+
+        { get:()=>config.background_color||defaultConfig.background_color, set:(v)=>{config.background_color=v;window.elementSdk.setConfig({background_color:v});} },
+
+        { get:()=>config.surface_color||defaultConfig.surface_color, set:(v)=>{config.surface_color=v;window.elementSdk.setConfig({surface_color:v});} },
+
+        { get:()=>config.text_color||defaultConfig.text_color, set:(v)=>{config.text_color=v;window.elementSdk.setConfig({text_color:v});} },
+
+        { get:()=>config.primary_action||defaultConfig.primary_action, set:(v)=>{config.primary_action=v;window.elementSdk.setConfig({primary_action:v});} },
+
+        { get:()=>config.secondary_action||defaultConfig.secondary_action, set:(v)=>{config.secondary_action=v;window.elementSdk.setConfig({secondary_action:v});} }
+
+      ],
+
+      borderables: [],
+
+      fontEditable: { get:()=>config.font_family||defaultConfig.font_family, set:(v)=>{config.font_family=v;window.elementSdk.setConfig({font_family:v});} },
+
+      fontSizeable: { get:()=>config.font_size||defaultConfig.font_size, set:(v)=>{config.font_size=v;window.elementSdk.setConfig({font_size:v});} }
+
+    }),
+
+    mapToEditPanelValues: (config) => new Map([
+
+      ['system_title', config.system_title || defaultConfig.system_title],
+
+      ['company_name', config.company_name || defaultConfig.company_name]
+
+    ])
+
+  });
+
+}
+
+
+
+lucide.createIcons();
+
+</script>
+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f134cd086a0a9ea',t:'MTc3NzAxNDc1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>
