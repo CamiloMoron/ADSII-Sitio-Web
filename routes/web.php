@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehiculoController;
@@ -37,9 +38,7 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('clientes.index'); // Redirect to clientes for now
     })->name('catalogos.index');
     
-    Route::get('/ordenes-servicio', function () {
-        return view('dashboard'); // Temporary
-    })->name('ordenes-servicio.index');
+    Route::resource('ordenes-servicio', OrdenServicioController::class);
     
     Route::get('/ordenes-venta', function () {
         return view('dashboard'); // Temporary
