@@ -4,6 +4,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehiculoController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,14 +31,11 @@ Route::middleware('auth')->group(function () {
     // Materiales CRUD
     Route::resource('materiales', MaterialController::class);
     
+    Route::resource('usuarios', UserController::class);
     // Placeholder routes for menu items (will be implemented later)
     Route::get('/catalogos', function () {
         return redirect()->route('clientes.index'); // Redirect to clientes for now
     })->name('catalogos.index');
-    
-    Route::get('/usuarios', function () {
-        return view('dashboard'); // Temporary
-    })->name('usuarios.index');
     
     Route::get('/ordenes-servicio', function () {
         return view('dashboard'); // Temporary
