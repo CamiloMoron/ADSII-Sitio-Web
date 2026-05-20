@@ -39,9 +39,9 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('clientes.index'); // Redirect to clientes for now
     })->name('catalogos.index');
     
-    Route::resource('ordenes-servicio', OrdenServicioController::class);
+    Route::resource('ordenes-servicio', OrdenServicioController::class)->parameters(['ordenes-servicio' => 'orden_servicio']);
     
-    Route::resource('ordenes-venta', OrdenVentaController::class);
+    Route::resource('ordenes-venta', OrdenVentaController::class)->parameters(['ordenes-venta' => 'orden_venta']);
     
     Route::get('/facturas', function () {
         return view('dashboard'); // Temporary

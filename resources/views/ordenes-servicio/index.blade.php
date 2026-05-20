@@ -98,8 +98,8 @@
     </div>
 
     <!-- Modal Overlay for New Orden -->
-    <div id="new-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
-        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;">
+    <div id="new-form-overlay" class="hidden fixed inset-0 min-h-screen w-screen z-50 flex items-center justify-center p-4 bg-black/60">
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in max-h-[85vh] overflow-y-auto" style="background:#1e293b;border:1px solid #334155;">
             <h3 class="text-lg font-bold text-white mb-4">Nueva Orden de Servicio</h3>
             <form action="{{ route('ordenes-servicio.store') }}" method="POST" class="space-y-4">
                 @csrf
@@ -189,8 +189,8 @@
     </div>
 
     <!-- Modal Overlay for Edit Orden -->
-    <div id="edit-form-overlay" class="hidden fixed inset-0 z-40 flex items-center justify-center" style="background:rgba(0,0,0,0.6);">
-        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in" style="background:#1e293b;border:1px solid #334155;">
+    <div id="edit-form-overlay" class="hidden fixed inset-0 min-h-screen w-screen z-50 flex items-center justify-center p-4 bg-black/60">
+        <div class="w-full max-w-lg mx-4 rounded-2xl p-6 fade-in max-h-[85vh] overflow-y-auto" style="background:#1e293b;border:1px solid #334155;">
             <h3 class="text-lg font-bold text-white mb-4">Editar Orden de Servicio</h3>
             <form id="edit-form" method="POST" class="space-y-4">
                 @csrf
