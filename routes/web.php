@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\OrdenVentaController;
@@ -43,9 +44,7 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('ordenes-venta', OrdenVentaController::class)->parameters(['ordenes-venta' => 'orden_venta']);
     
-    Route::get('/facturas', function () {
-        return view('dashboard'); // Temporary
-    })->name('facturas.index');
+    Route::resource('facturas', FacturaController::class)->parameters(['facturas' => 'factura']);
     
     Route::get('/rutas', function () {
         return view('dashboard'); // Temporary
