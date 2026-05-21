@@ -8,6 +8,7 @@ use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\GuiaController;
 use App\Http\Controllers\RutaController;
@@ -55,9 +56,7 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('clasificacion', ClasificacionController::class)->parameters(['clasificacion' => 'clasificacion']);
     
-    Route::get('/inventario', function () {
-        return view('dashboard'); // Temporary
-    })->name('inventario.index');
+    Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 });
 
 require __DIR__.'/auth.php';
