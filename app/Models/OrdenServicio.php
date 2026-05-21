@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class OrdenServicio extends Model
 {
@@ -31,5 +32,12 @@ class OrdenServicio extends Model
     public function scopeActivas($query)
     {
         return $query->whereNotIn('estado', ['Cancelada', 'Completada']);
+    }
+
+    public function rutas(): BelongsToMany
+    {
+        return $this->belongsToMany(Ruta::class, 'orden_servicio_ruta')
+            ->withPivot('orden_recorrido')
+            ->orderByPivot('orden_recorrido');
     }
 }

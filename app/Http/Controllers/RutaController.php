@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\OrdenServicio;
+use App\Models\Ruta;
+use App\Models\User;
+use App\Models\Vehiculo;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class RutaController extends Controller
+{
+    public function index()
+    {
+        $rutas = Ruta::with(['chofer', 'vehiculo', 'ordenesServicio.cliente'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $choferes = User::activos()->orderBy('nombre')->get();
+        $vehiculos = Vehiculo::operativos()->orderBy('placa')->get();
+        $ordenesDisponibles = OrdenServicio::activas()->orderBy('fecha')->get();
+        return view('rutas.index', compact('rutas', 'choferes', 'vehiculos', 'ordenesDisponibles'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'chofer_id' => ['required', 'exists:users,id'],
+            'vehiculo_id' => ['required', 'exists:vehiculos,id'],
+            'hora_salida' => ['required', 'date_format:H:i'],
+            'carga_estimada' => ['nullable', 'string', 'max:255'],
+            'fecha' => ['required', 'date'],
+        ], [
+            'chofer_id.required' => 'El chofer es obligatorio.',
+            'chofer_id.exists' => 'El chofer seleccionado no es válido.',
+            'vehiculo_id.required' => 'El vehículo es obligatorio.',
+            'vehiculo_id.exists' => 'El vehículo seleccionado no es válido.',
+            'hora_salida.required' => 'La hora de salida es obligatoria.',
+            'fecha.required' => 'La fecha es obligatoria.',
+        ]);
+
+        $validated['estado'] = 'Pendiente';
+
+        $ruta = Ruta::create($validated);
+
+        if ($request->filled('ordenes_servicio_ids')) {
+            $ordenServicioIds = collect($request->ordenes_servicio_ids)
+                ->mapWithKeys(function ($id, $index) {
+                    return [$id => ['orden_recorrido' => $index + 1]];
+                });
+            $ruta->ordenesServicio()->sync($ordenServicioIds);
+        }
+
+        return redirect()->route('rutas.index')
+            ->with('success', 'Ruta creada exitosamente.');
+    }
+
+    public function update(Request $request, Ruta $ruta)
+    {
+        $validated = $request->validate([
+            'chofer_id' => ['required', 'exists:users,id'],
+            'vehiculo_id' => ['required', 'exists:vehiculos,id'],
+            'hora_salida' => ['required', 'date_format:H:i'],
+            'carga_estimada' => ['nullable', 'string', 'max:255'],
+            'estado' => ['required', Rule::in(['Pendiente', 'En Progreso', 'Completada', 'Cancelada'])],
+            'fecha' => ['required', 'date'],
+        ], [
+            'chofer_id.required' => 'El chofer es obligatorio.',
+            'vehiculo_id.required' => 'El vehículo es obligatorio.',
+            'hora_salida.required' => 'La hora de salida es obligatoria.',
+            'estado.required' => 'El estado es obligatorio.',
+            'fecha.required' => 'La fecha es obligatoria.',
+        ]);
+
+        $ruta->update($validated);
+
+        if ($request->has('ordenes_servicio_ids')) {
+            $ordenServicioIds = collect($request->ordenes_servicio_ids ?? [])
+                ->mapWithKeys(function ($id, $index) {
+                    return [$id => ['orden_recorrido' => $index + 1]];
+                });
+            $ruta->ordenesServicio()->sync($ordenServicioIds);
+        }
+
+        return redirect()->route('rutas.index')
+            ->with('success', 'Ruta actualizada exitosamente.');
+    }
+
+    public function destroy(Ruta $ruta)
+    {
+        $ruta->ordenesServicio()->detach();
+        $ruta->delete();
+
+        return redirect()->route('rutas.index')
+            ->with('success', 'Ruta eliminada exitosamente.');
+    }
+}
