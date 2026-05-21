@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('registros_inventario', function (Blueprint $table) {
             $table->id();
-            $table->string('material');
+            $table->foreignId('lote_clasificado_id')->constrained('lotes_clasificados')->restrictOnDelete();
             $table->integer('peso_bruto');
             $table->integer('peso_final');
             $table->integer('merma');

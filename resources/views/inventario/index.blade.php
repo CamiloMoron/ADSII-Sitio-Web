@@ -41,8 +41,8 @@
                 <tbody>
                     @forelse($registros as $registro)
                         <tr class="transition hover:bg-white/5" style="border-top:1px solid #334155;">
-                            <td class="px-4 py-3 mono" style="color:#f59e0b;">LOT-{{ str_pad($registro->id, 3, '0', STR_PAD_LEFT) }}</td>
-                            <td class="px-4 py-3 text-white">{{ $registro->material }}</td>
+                            <td class="px-4 py-3 mono" style="color:#f59e0b;">LOT-{{ str_pad($registro->lote->id, 3, '0', STR_PAD_LEFT) }}</td>
+                            <td class="px-4 py-3 text-white">{{ $registro->lote->material_final }}</td>
                             <td class="px-4 py-3 font-medium text-white">{{ number_format($registro->peso_final) }} Kg</td>
                             <td class="px-4 py-3" style="color:#fca5a5;">{{ number_format($registro->merma) }} Kg</td>
                             <td class="px-4 py-3" style="color:#94a3b8;">{{ $registro->zona_almacen }}</td>
@@ -99,17 +99,17 @@
             <form action="{{ route('inventario.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Material Procesado</label>
-                    <select name="material"
+                    <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Lote Clasificado</label>
+                    <select name="lote_clasificado_id"
                             required
                             class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2"
                             style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
-                        <option value="">Seleccione material</option>
-                        @foreach($materiales as $material)
-                            <option value="{{ $material->nombre }}">{{ $material->nombre }}</option>
+                        <option value="">Seleccione lote</option>
+                        @foreach($lotesPendientes as $lote)
+                            <option value="{{ $lote->id }}">LOT-{{ str_pad($lote->id, 3, '0', STR_PAD_LEFT) }} - {{ $lote->material_final }}</option>
                         @endforeach
                     </select>
-                    @error('material')
+                    @error('lote_clasificado_id')
                         <p class="mt-1 text-xs" style="color:#fca5a5;">{{ $message }}</p>
                     @enderror
                 </div>
@@ -191,14 +191,14 @@
                 @csrf
                 @method('PUT')
                 <div>
-                    <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Material</label>
-                    <select name="material"
-                            id="edit-material"
+                    <label class="block text-sm font-medium mb-1" style="color:#94a3b8;">Lote Clasificado</label>
+                    <select name="lote_clasificado_id"
+                            id="edit-lote_clasificado_id"
                             required
                             class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2"
                             style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
-                        @foreach($materiales as $material)
-                            <option value="{{ $material->nombre }}">{{ $material->nombre }}</option>
+                        @foreach($lotesPendientes as $lote)
+                            <option value="{{ $lote->id }}">LOT-{{ str_pad($lote->id, 3, '0', STR_PAD_LEFT) }} - {{ $lote->material_final }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -282,7 +282,7 @@
         const bruto = parseInt(document.getElementById(brutoId)?.value) || 0;
         const final = parseInt(document.getElementById(finalId)?.value) || 0;
         const el = document.getElementById(calcId);
-        if (el) el.textContent = (bruto - final) + ' Kg';
+        if (el) el.textContent = Math.max(0, bruto - final) + ' Kg';
     }
 
     function bindMermaCalc(brutoId, finalId, calcId) {
@@ -309,7 +309,7 @@
         const r = registros.find(x => x.id === id);
         if (!r) return;
 
-        document.getElementById('edit-material').value = r.material;
+        document.getElementById('edit-lote_clasificado_id').value = r.lote_clasificado_id;
         document.getElementById('edit-peso_bruto').value = r.peso_bruto;
         document.getElementById('edit-peso_final').value = r.peso_final;
         document.getElementById('edit-zona_almacen').value = r.zona_almacen;

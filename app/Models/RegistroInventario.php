@@ -13,7 +13,7 @@ class RegistroInventario extends Model
     protected $table = 'registros_inventario';
 
     protected $fillable = [
-        'material',
+        'lote_clasificado_id',
         'peso_bruto',
         'peso_final',
         'merma',
@@ -21,6 +21,11 @@ class RegistroInventario extends Model
         'estado',
         'supervisor_id',
     ];
+
+    public function lote(): BelongsTo
+    {
+        return $this->belongsTo(LoteClasificado::class, 'lote_clasificado_id');
+    }
 
     public function supervisor(): BelongsTo
     {

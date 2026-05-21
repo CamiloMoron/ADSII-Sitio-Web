@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LoteClasificado extends Model
 {
@@ -25,5 +26,10 @@ class LoteClasificado extends Model
     public function operario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'operario_id');
+    }
+
+    public function registroInventario(): HasOne
+    {
+        return $this->hasOne(RegistroInventario::class, 'lote_clasificado_id');
     }
 }
