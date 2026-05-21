@@ -16,7 +16,7 @@ class RutaController extends Controller
         $rutas = Ruta::with(['chofer', 'vehiculo', 'ordenesServicio.cliente'])
             ->orderBy('created_at', 'desc')
             ->get();
-        $choferes = User::activos()->orderBy('nombre')->get();
+        $choferes = User::activos()->whereHas('role', fn ($q) => $q->where('name', 'Chofer'))->orderBy('nombre')->get();
         $vehiculos = Vehiculo::operativos()->orderBy('placa')->get();
         $ordenesDisponibles = OrdenServicio::activas()->orderBy('fecha')->get();
         return view('rutas.index', compact('rutas', 'choferes', 'vehiculos', 'ordenesDisponibles'));
@@ -25,7 +25,18 @@ class RutaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'chofer_id' => ['required', 'exists:users,id'],
+            'chofer_id' => [
+                'required',
+                'exists:users,id',
+                function ($attribute, $value, $fail) {
+                    $isChofer = User::where('id', $value)
+                        ->whereHas('role', fn ($q) => $q->where('name', 'Chofer'))
+                        ->exists();
+                    if (!$isChofer) {
+                        $fail('El usuario seleccionado no tiene el rol de Chofer.');
+                    }
+                },
+            ],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
             'hora_salida' => ['required', 'date_format:H:i'],
             'carga_estimada' => ['nullable', 'string', 'max:255'],
@@ -58,7 +69,18 @@ class RutaController extends Controller
     public function update(Request $request, Ruta $ruta)
     {
         $validated = $request->validate([
-            'chofer_id' => ['required', 'exists:users,id'],
+            'chofer_id' => [
+                'required',
+                'exists:users,id',
+                function ($attribute, $value, $fail) {
+                    $isChofer = User::where('id', $value)
+                        ->whereHas('role', fn ($q) => $q->where('name', 'Chofer'))
+                        ->exists();
+                    if (!$isChofer) {
+                        $fail('El usuario seleccionado no tiene el rol de Chofer.');
+                    }
+                },
+            ],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
             'hora_salida' => ['required', 'date_format:H:i'],
             'carga_estimada' => ['nullable', 'string', 'max:255'],
@@ -66,7 +88,9 @@ class RutaController extends Controller
             'fecha' => ['required', 'date'],
         ], [
             'chofer_id.required' => 'El chofer es obligatorio.',
+            'chofer_id.exists' => 'El chofer seleccionado no es válido.',
             'vehiculo_id.required' => 'El vehículo es obligatorio.',
+            'vehiculo_id.exists' => 'El vehículo seleccionado no es válido.',
             'hora_salida.required' => 'La hora de salida es obligatoria.',
             'estado.required' => 'El estado es obligatorio.',
             'fecha.required' => 'La fecha es obligatoria.',
