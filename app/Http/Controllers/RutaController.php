@@ -14,7 +14,7 @@ class RutaController extends Controller
     public function index()
     {
         $rutas = Ruta::with(['chofer', 'vehiculo', 'ordenesServicio.cliente'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
         $choferes = User::activos()->whereHas('role', fn ($q) => $q->where('name', 'Chofer'))->orderBy('nombre')->get();
         $vehiculos = Vehiculo::operativos()->orderBy('placa')->get();

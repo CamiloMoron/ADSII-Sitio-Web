@@ -13,7 +13,7 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        $materiales = Material::orderBy('created_at', 'desc')->get();
+        $materiales = Material::orderBy('id', 'asc')->get();
         return view('catalogos.materiales.index', compact('materiales'));
     }
 

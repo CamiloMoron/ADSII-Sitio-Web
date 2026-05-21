@@ -13,7 +13,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        $clientes = Cliente::orderBy('created_at', 'desc')->get();
+        $clientes = Cliente::orderBy('id', 'asc')->get();
         return view('catalogos.clientes.index', compact('clientes'));
     }
 

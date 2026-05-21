@@ -11,7 +11,7 @@ class OrdenServicioController extends Controller
 {
     public function index()
     {
-        $ordenes = OrdenServicio::with('cliente')->orderBy('created_at', 'desc')->get();
+        $ordenes = OrdenServicio::with('cliente')->orderBy('id', 'asc')->get();
         $clientes = Cliente::activos()->orderBy('nombre')->get();
         return view('ordenes-servicio.index', compact('ordenes', 'clientes'));
     }

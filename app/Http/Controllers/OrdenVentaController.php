@@ -11,7 +11,7 @@ class OrdenVentaController extends Controller
 {
     public function index()
     {
-        $ordenes = OrdenVenta::orderBy('created_at', 'desc')->get();
+        $ordenes = OrdenVenta::orderBy('id', 'asc')->get();
         $materiales = Material::orderBy('nombre')->get();
         return view('ordenes-venta.index', compact('ordenes', 'materiales'));
     }

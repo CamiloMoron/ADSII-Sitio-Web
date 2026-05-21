@@ -13,7 +13,7 @@ class VehiculoController extends Controller
      */
     public function index()
     {
-        $vehiculos = Vehiculo::orderBy('created_at', 'desc')->get();
+        $vehiculos = Vehiculo::orderBy('id', 'asc')->get();
         return view('catalogos.vehiculos.index', compact('vehiculos'));
     }
 

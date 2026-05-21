@@ -11,7 +11,7 @@ class FacturaController extends Controller
 {
     public function index()
     {
-        $facturas = Factura::with('ordenVenta')->orderBy('created_at', 'desc')->get();
+        $facturas = Factura::with('ordenVenta')->orderBy('id', 'asc')->get();
         $ordenesVenta = OrdenVenta::orderBy('cliente')->get();
         return view('facturas.index', compact('facturas', 'ordenesVenta'));
     }
