@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Ruta extends Model
 {
@@ -45,5 +46,10 @@ class Ruta extends Model
     public function scopeActivas($query)
     {
         return $query->whereNotIn('estado', ['Completada', 'Cancelada']);
+    }
+
+    public function guia(): HasOne
+    {
+        return $this->hasOne(Guia::class);
     }
 }
