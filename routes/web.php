@@ -8,6 +8,7 @@ use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\GuiaController;
 use App\Http\Controllers\RutaController;
 use App\Http\Controllers\VehiculoController;
@@ -52,9 +53,7 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('guias', GuiaController::class)->parameters(['guias' => 'guia']);
     
-    Route::get('/clasificacion', function () {
-        return view('dashboard'); // Temporary
-    })->name('clasificacion.index');
+    Route::resource('clasificacion', ClasificacionController::class)->parameters(['clasificacion' => 'clasificacion']);
     
     Route::get('/inventario', function () {
         return view('dashboard'); // Temporary
