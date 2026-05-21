@@ -39,7 +39,22 @@ class RutaController extends Controller
             ],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
             'hora_salida' => ['required', 'date_format:H:i'],
-            'carga_estimada' => ['nullable', 'string', 'max:255'],
+            'carga_estimada' => [
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    $vehiculo = Vehiculo::find($request->vehiculo_id);
+                    if (!$vehiculo) return;
+
+                    $numericValue = (float) filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, \FILTER_FLAG_ALLOW_FRACTION);
+                    $capacidadNumeric = (float) filter_var($vehiculo->capacidad, FILTER_SANITIZE_NUMBER_FLOAT, \FILTER_FLAG_ALLOW_FRACTION);
+
+                    if ($numericValue > $capacidadNumeric) {
+                        $fail("La carga estimada ({$numericValue}) supera la capacidad máxima del vehículo ({$vehiculo->capacidad}).");
+                    }
+                },
+            ],
             'fecha' => ['required', 'date'],
         ], [
             'chofer_id.required' => 'El chofer es obligatorio.',
@@ -83,7 +98,23 @@ class RutaController extends Controller
             ],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
             'hora_salida' => ['required', 'date_format:H:i'],
-            'carga_estimada' => ['nullable', 'string', 'max:255'],
+            'carga_estimada' => [
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request, $ruta) {
+                    $vehiculoId = $request->vehiculo_id ?? $ruta->vehiculo_id;
+                    $vehiculo = Vehiculo::find($vehiculoId);
+                    if (!$vehiculo) return;
+
+                    $numericValue = (float) filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, \FILTER_FLAG_ALLOW_FRACTION);
+                    $capacidadNumeric = (float) filter_var($vehiculo->capacidad, FILTER_SANITIZE_NUMBER_FLOAT, \FILTER_FLAG_ALLOW_FRACTION);
+
+                    if ($numericValue > $capacidadNumeric) {
+                        $fail("La carga estimada ({$numericValue}) supera la capacidad máxima del vehículo ({$vehiculo->capacidad}).");
+                    }
+                },
+            ],
             'estado' => ['required', Rule::in(['Pendiente', 'En Progreso', 'Completada', 'Cancelada'])],
             'fecha' => ['required', 'date'],
         ], [

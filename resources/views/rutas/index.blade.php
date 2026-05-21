@@ -156,7 +156,8 @@
                            value="{{ old('carga_estimada') }}"
                            class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2"
                            style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;"
-                           placeholder="Ej. 5 m³">
+                           placeholder="Ej. 5.5 Ton">
+                    <p id="vehiculo-capacidad-indicator" class="mt-1 text-xs" style="color:#64748b;"></p>
                     @error('carga_estimada')
                         <p class="mt-1 text-xs" style="color:#fca5a5;">{{ $message }}</p>
                     @enderror
@@ -257,6 +258,7 @@
                            id="edit-carga_estimada"
                            class="w-full px-3 py-2.5 rounded-lg text-sm text-white outline-none focus:ring-2"
                            style="background:#0f172a;border:1px solid #334155;--tw-ring-color:#f59e0b;">
+                    <p id="edit-vehiculo-capacidad-indicator" class="mt-1 text-xs" style="color:#64748b;"></p>
                 </div>
 
                 <div>
@@ -303,9 +305,41 @@
 
 <script>
     const rutas = @json($rutas);
+    const vehiculos = @json($vehiculos);
+
+    function getCapacidadText(vehiculoId) {
+        const v = vehiculos.find(v => v.id === vehiculoId);
+        return v ? `Capacidad máxima del vehículo: ${v.capacidad}` : '';
+    }
+
+    function updateCapacidadIndicator(selectId, indicatorId) {
+        const select = document.getElementById(selectId);
+        const indicator = document.getElementById(indicatorId);
+        if (!select || !indicator) return;
+        const text = getCapacidadText(parseInt(select.value));
+        indicator.textContent = text;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const newSelect = document.querySelector('select[name="vehiculo_id"]');
+        if (newSelect) {
+            newSelect.addEventListener('change', function () {
+                updateCapacidadIndicator('vehiculo_id', 'vehiculo-capacidad-indicator');
+            });
+            updateCapacidadIndicator('vehiculo_id', 'vehiculo-capacidad-indicator');
+        }
+
+        const editSelect = document.getElementById('edit-vehiculo_id');
+        if (editSelect) {
+            editSelect.addEventListener('change', function () {
+                updateCapacidadIndicator('edit-vehiculo_id', 'edit-vehiculo-capacidad-indicator');
+            });
+        }
+    });
 
     function openNewForm() {
         document.getElementById('new-form-overlay').classList.remove('hidden');
+        setTimeout(() => updateCapacidadIndicator('vehiculo_id', 'vehiculo-capacidad-indicator'), 50);
     }
 
     function closeNewForm() {
@@ -324,6 +358,7 @@
         document.getElementById('edit-estado').value = ruta.estado;
 
         document.getElementById('edit-form').action = `/rutas/${id}`;
+        setTimeout(() => updateCapacidadIndicator('edit-vehiculo_id', 'edit-vehiculo-capacidad-indicator'), 50);
         document.getElementById('edit-form-overlay').classList.remove('hidden');
     }
 
