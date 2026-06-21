@@ -35,4 +35,9 @@ class Cliente extends Model
     {
         return $query->where('estado', 'Activo');
     }
+
+    public function contratos()
+    {
+        return $this->hasMany(Contrato::class);
+    }
 }

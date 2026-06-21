@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ClasificacionController;
@@ -31,6 +33,9 @@ Route::middleware('auth')->group(function () {
     
     // Clientes CRUD
     Route::resource('clientes', ClienteController::class);
+    
+    // Contratos CRUD
+    Route::resource('contratos', ContratoController::class);
     
     // Vehiculos CRUD
     Route::resource('vehiculos', VehiculoController::class);
@@ -57,6 +62,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('clasificacion', ClasificacionController::class)->parameters(['clasificacion' => 'clasificacion']);
     
     Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
+    
+    // Reportes
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/exportar/contratos', [ReporteController::class, 'exportarContratos'])->name('reportes.contratos');
+    Route::get('/reportes/exportar/ordenes', [ReporteController::class, 'exportarOrdenes'])->name('reportes.ordenes');
 });
 
 require __DIR__.'/auth.php';

@@ -4,6 +4,11 @@
        style="{{ request()->routeIs('clientes.*') ? 'border-bottom-color:#f59e0b;color:#f59e0b;' : '' }}">
         Clientes
     </a>
+    <a href="{{ route('contratos.index') }}" 
+       class="pb-3 transition {{ request()->routeIs('contratos.*') ? 'border-b-2 text-white' : 'text-gray-400 hover:text-white' }}"
+       style="{{ request()->routeIs('contratos.*') ? 'border-bottom-color:#f59e0b;color:#f59e0b;' : '' }}">
+        Contratos
+    </a>
     <a href="{{ route('vehiculos.index') }}" 
        class="pb-3 transition {{ request()->routeIs('vehiculos.*') ? 'border-b-2 text-white' : 'text-gray-400 hover:text-white' }}"
        style="{{ request()->routeIs('vehiculos.*') ? 'border-bottom-color:#f59e0b;color:#f59e0b;' : '' }}">
